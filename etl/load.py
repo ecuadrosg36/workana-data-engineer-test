@@ -1,12 +1,9 @@
 import logging
+import sqlite3
 from typing import Optional
-
 import pandas as pd
-from sqlalchemy import create_engine, text
-from sqlalchemy.engine import Engine
-
 from etl.transform import transform_transactions
-from etl.config import RAW_CSV_PATH, CLEAN_OUTPUT_PATH, SQLITE_URL
+from etl.config import RAW_CSV_PATH, CLEAN_OUTPUT_PATH, SQLITE_DB_PATH
 
 # ---------------------------------------------------------------------
 # Logging
@@ -18,44 +15,33 @@ logging.basicConfig(
 logger = logging.getLogger("etl.load")
 
 # ---------------------------------------------------------------------
-# SQLite Engine
-# ---------------------------------------------------------------------
-def get_engine_sqlite() -> Engine:
-    logger.info("Creando conexión a SQLite...")
-    return create_engine(SQLITE_URL, echo=False)
-
-# ---------------------------------------------------------------------
-# Carga y validación
+# Carga con sqlite3
 # ---------------------------------------------------------------------
 def load_dataframe_to_sqlite(
     df: pd.DataFrame,
-    engine: Engine,
     table_name: str,
     if_exists: str = "append",
     chunksize: int = 50_000,
 ) -> None:
-    logger.info(
-        "Cargando DataFrame a SQLite (tabla=%s, filas=%s)...",
-        table_name,
-        len(df),
-    )
-    df.to_sql(
-        name=table_name,
-        con=engine,
-        if_exists=if_exists,
-        index=False,
-        method="multi",
-        chunksize=chunksize,
-    )
-    logger.info("Carga finalizada.")
+    logger.info("Conectando a SQLite: %s", SQLITE_DB_PATH)
+    with sqlite3.connect(SQLITE_DB_PATH) as conn:
+        df.to_sql(
+            name=table_name,
+            con=conn,
+            if_exists=if_exists,
+            index=False,
+            chunksize=chunksize,
+        )
+        logger.info("✅ Carga completada en la tabla '%s'.", table_name)
 
-def validate_table_not_empty(engine: Engine, table_name: str) -> int:
-    logger.info("Validando que la tabla '%s' no esté vacía...", table_name)
-    with engine.connect() as conn:
-        count = conn.execute(text(f"SELECT COUNT(*) FROM {table_name}")).scalar_one()
+def validate_table_not_empty(table_name: str) -> int:
+    with sqlite3.connect(SQLITE_DB_PATH) as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT COUNT(*) FROM {table_name}")
+        count = cursor.fetchone()[0]
     if count == 0:
         raise ValueError(f"La tabla '{table_name}' quedó vacía.")
-    logger.info("Validación OK. Filas en tabla: %s", count)
+    logger.info("✅ Validación OK. Filas en tabla: %s", count)
     return count
 
 # ---------------------------------------------------------------------
@@ -66,10 +52,8 @@ def main(
     read_from_parquet: bool = False,
     parquet_path: Optional[str] = None,
 ):
-    engine = get_engine_sqlite()
-
     if read_from_parquet and parquet_path:
-        logger.info("Leyendo DataFrame desde Parquet: %s", parquet_path)
+        logger.info("Leyendo Parquet: %s", parquet_path)
         df = pd.read_parquet(parquet_path)
     else:
         logger.info("Transformando CSV crudo: %s", RAW_CSV_PATH)
@@ -80,18 +64,16 @@ def main(
         )
 
     if df.empty:
-        raise ValueError("El DataFrame transformado está vacío. Abortando carga.")
+        raise ValueError("El DataFrame está vacío. Abortando carga.")
 
     load_dataframe_to_sqlite(
         df=df,
-        engine=engine,
         table_name=table_name,
         if_exists="append",
         chunksize=50_000,
     )
 
-    validate_table_not_empty(engine, table_name)
-    logger.info("✅ Proceso de carga finalizado con éxito.")
+    validate_table_not_empty(table_name)
 
 if __name__ == "__main__":
     import argparse
@@ -106,7 +88,7 @@ if __name__ == "__main__":
         "--from-parquet",
         dest="parquet_path",
         default=None,
-        help="Ruta a un parquet para cargar en lugar de transformar el CSV.",
+        help="Ruta a un Parquet en lugar de transformar el CSV.",
     )
 
     args = parser.parse_args()
