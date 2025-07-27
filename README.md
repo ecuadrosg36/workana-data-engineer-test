@@ -15,8 +15,8 @@ Este repositorio contiene la estructura base para resolver la prueba técnica de
 
 ## ⚙️ Requisitos
 
-- Python 3.8+
-- PostgreSQL local
+- Python 3.12
+- SQLite
 - Airflow (opcionalmente en Docker)
 - Librerías: ver `requirements.txt`
 
@@ -40,7 +40,7 @@ Airflow o alternativa compatible. Inicia los DAGs desde `airflow_dags/`.
 
 ## 📌 Notas
 
-Este proyecto usa **PostgreSQL** como base de datos por defecto.
+Este proyecto usa SQLite como base de datos por defecto.
 
 # ✅ Plan de Acción: Ejercicio 1 - Orquestación local
 
@@ -86,6 +86,20 @@ PS C:\Users\enman\Downloads\COLFONDOS> & C:/Users/enman/Downloads/COLFONDOS/.ven
 - [X] Crear función de transformación con `pandas` (lectura por chunks opcional)
   ➜ `etl/transform.py`
 
+## 📌 Control de versiones y push a rama remota
+
+Durante el desarrollo de esta prueba técnica, utilicé **Git** como sistema de control de versiones y **GitHub** como repositorio remoto. Para mantener el historial de cambios limpio y reflejar el avance del proyecto, ejecuté los siguientes comandos manualmente desde el entorno local:
+
+```bash
+git init
+git add .
+git commit -m "Initial commit - Workana Data Engineer challenge (SQLite)"
+git branch -M main
+git remote add origin https://github.com/ecuadrosg36/workana-data-engineer-test.git
+git push -u origin main
+```
+
+
 ### 🗄️ Carga a base de datos
 
 - [X] Configurar conexión a SQLite
@@ -94,6 +108,12 @@ PS C:\Users\enman\Downloads\COLFONDOS> & C:/Users/enman/Downloads/COLFONDOS/.ven
 
 - [X] Crear función para carga a DB
   ➜ `etl/load.py`
+
+## 🧠 Por qué SQLite
+
+Inicialmente se planeó usar PostgreSQL, pero se optó por SQLite como alternativa práctica. SQLite no requiere instalación, es compatible con SQLAlchemy y permite ejecutar el pipeline completo localmente.
+
+El código está preparado para cambiar fácilmente a PostgreSQL si se desea.
 
 ### ⚙️ Orquestación con Airflow
 
