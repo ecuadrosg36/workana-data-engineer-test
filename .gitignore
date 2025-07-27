@@ -1,0 +1,35 @@
+cat > .gitignore << "EOF"
+# Entornos virtuales
+.venv/
+venv*/
+env*/
+venv_gpu/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.pytest_cache/
+
+# Datos y outputs locales
+data/
+logs/
+output/
+*.db
+*.parquet
+*.csv
+*.gz
+
+# Airflow runtime stuff (si lo usas)
+airflow_home/
+airflow_logs/
+
+# IDE / SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Notebooks
+.ipynb_checkpoints/
+EOF
