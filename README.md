@@ -99,7 +99,6 @@ git remote add origin https://github.com/ecuadrosg36/workana-data-engineer-test.
 git push -u origin main
 ```
 
-
 ### 🗄️ Carga a base de datos
 
 - [X] Configurar conexión a SQLite
@@ -110,7 +109,6 @@ git push -u origin main
   ➜ `etl/load.py`
 
 ![1753658977385](image/README/1753658977385.png)
-
 
 ![1753659062275](image/README/1753659062275.png)
 
@@ -129,7 +127,7 @@ El código está preparado para cambiar fácilmente a PostgreSQL si se desea.
   - Esperar archivo y tamaño
   - Transformar datos
   - Cargar a DB
-- [ ] Agregar sensores y reintentos a las tareas
+- [X] Agregar sensores y reintentos a las tareas
   ➜ `airflow_dags/etl_transactions_dag.py`
 
 ### 🧪 Testing
@@ -152,9 +150,9 @@ El código está preparado para cambiar fácilmente a PostgreSQL si se desea.
 
 ## 🗂️ Enlaces pendientes (por hacer)
 
-- [ ] [ ] Añadir enlace real al archivo CSV (`sample_transactions.csv`)
-- [ ] [ ] Configurar Airflow (Docker o instalación local)
-- [ ] [ ] Documentar pasos de ejecución en README
+- [ ] Añadir enlace real al archivo CSV (`sample_transactions.csv`)
+- [ ] Configurar Airflow (Docker o instalación local)
+- [ ] Documentar pasos de ejecución en README
 
 ---
 
