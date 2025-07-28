@@ -167,12 +167,18 @@ docker-compose up
 
   ![1753666490954](image/README/1753666490954.png)
 
+  ![1753718989694](image/README/1753718989694.png)
+
+  ![1753719590824](image/README/1753719590824.png)
+
 ### 🧪 Testing
 
-- [ ] Escribir tests unitarios para transformación y carga➜ `tests/test_transform.py`➜ `tests/test_load.py`
-- [ ] Escribir test de integración para el DAG completo
+- [X] Escribir tests unitarios para transformación y carga➜ `tests/test_transform.py`➜ `tests/test_load.py`
+- [X] Escribir test de integración para el DAG completo
 
-### 📈 Logging y métricas (extra)
+  ![1753721641888](image/README/1753721641888.png)
+
+### 📈 Logging y métricas 
 
 - [ ] Registrar logs detallados por tarea
 - [ ] Medir tiempo de ejecución por paso
@@ -183,17 +189,7 @@ docker-compose up
 - [ ] Validar si tabla destino está vacía
 - [ ] Generar alerta/log en caso de error
 
----
-
-## 🗂️ Enlaces pendientes (por hacer)
-
-- [ ] Añadir enlace real al archivo CSV (`sample_transactions.csv`)
-- [ ] Configurar Airflow (Docker o instalación local)
-- [ ] Documentar pasos de ejecución en README
-
----
-
-## 🚀 Extras (si hay tiempo)
+## 🚀 Extras 
 
 - [ ] Lectura eficiente con `pandas.read_csv(..., chunksize=...)`
 - [ ] Soporte para `.csv.gz` con `compression='gzip'`
