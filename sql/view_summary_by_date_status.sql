@@ -1,3 +1,5 @@
+DROP VIEW IF EXISTS summary_by_date_status;
+
 CREATE VIEW summary_by_date_status AS
 SELECT
   DATE(ts) AS fecha,

@@ -217,6 +217,10 @@ Ejecutar consultas SQL sobre los datos ya cargados en la base de datos (desde el
 
   ![1753724395074](image/README/1753724395074.png)
 
+  ![1753726040297](image/README/1753726040297.png)
+
+  ![1753726094325](image/README/1753726094325.png)
+
 ### 🔍 2. Query para usuarios con >3 transacciones fallidas en últimos 7 días
 
 - [X] Identificar campo `status` o equivalente para marcar transacción fallida
@@ -225,6 +229,8 @@ Ejecutar consultas SQL sobre los datos ya cargados en la base de datos (desde el
   ➜ `sql/query_frequent_failures.sql`
 
   ![1753724546056](image/README/1753724546056.png)
+
+  ![1753726979327](image/README/1753726979327.png)
 
 ### 📈 3. Detección de anomalías (incrementos anómalos)
 
