@@ -49,8 +49,9 @@ with DAG(
     def task_cargar():
         logger.info(f"🚀 Cargando datos a base SQLite: {SQLITE_PATH}")
         df = transform_transactions(CSV_PATH)
-        load_dataframe_to_sqlite(df, db_path=SQLITE_PATH, table_name="transactions")
+        load_dataframe_to_sqlite(df=df, sqlite_path=SQLITE_PATH, table_name="transactions")
         logger.info("✅ Carga completada en SQLite")
+
 
     transformar = ShortCircuitOperator(
         task_id="transformar_datos",
@@ -63,3 +64,4 @@ with DAG(
     )
 
     transformar >> cargar
+
