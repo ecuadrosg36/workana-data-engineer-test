@@ -27,11 +27,8 @@ def transform_transactions(
     if not input_path.exists():
         raise FileNotFoundError(f"No se encontró el archivo: {input_path}")
 
-    cols = [
-        "transaction_id", "user_id", "timestamp", "amount", "status", "currency"
-    ]
+    cols = ["order_id", "user_id", "amount", "ts", "status"]
 
-    # Leer el archivo en chunks o completo
     if chunksize:
         logger.info(f"Lectura por chunks (chunksize={chunksize})")
         chunks = []
@@ -44,7 +41,6 @@ def transform_transactions(
         df = pd.read_csv(input_path, usecols=cols)
         df = _clean_chunk(df)
 
-    # Guardar como Parquet si se especifica
     if output_parquet:
         output_path = Path(output_parquet)
         output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -56,9 +52,8 @@ def transform_transactions(
 
 def _clean_chunk(df: pd.DataFrame) -> pd.DataFrame:
     """Realiza limpieza básica en un DataFrame de transacciones."""
-    df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
-    df = df.dropna(subset=["transaction_id", "user_id", "timestamp", "amount"])
+    df["ts"] = pd.to_datetime(df["ts"], errors="coerce")
+    df = df.dropna(subset=["order_id", "user_id", "ts", "amount"])
     df["amount"] = pd.to_numeric(df["amount"], errors="coerce").fillna(0)
     df["status"] = df["status"].str.upper()
-    df["currency"] = df["currency"].str.upper()
     return df
