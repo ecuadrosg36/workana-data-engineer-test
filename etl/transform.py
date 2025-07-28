@@ -1,128 +1,91 @@
 import logging
 from pathlib import Path
 from typing import Optional, Union, List
-
 import pandas as pd
+import os
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-
 EXPECTED_COLS = ["order_id", "user_id", "amount", "ts", "status"]
-
 
 def transform_transactions(
     input_path: Union[str, Path],
     output_parquet: Optional[Union[str, Path]] = None,
     chunksize: Optional[int] = None
 ) -> pd.DataFrame:
-    """
-    Limpia y transforma el CSV de transacciones:
-      - Valida que el archivo exista y no sea HTML.
-      - Estandariza columnas a minúsculas.
-      - Verifica presencia de columnas esperadas.
-      - Parsea fechas, convierte numéricos y normaliza status.
-      - (Opcional) Guarda a Parquet.
-
-    Args:
-        input_path: Ruta al CSV crudo.
-        output_parquet: Ruta a Parquet de salida (opcional).
-        chunksize: Tamaño de chunk para lectura en streaming.
-
-    Returns:
-        DataFrame limpio.
-    """
     input_path = Path(input_path)
+
+    logger.info(f"🔍 Verificando existencia del archivo en: {input_path.resolve()}")
     if not input_path.exists():
+        logger.error(f"❌ Archivo no encontrado: {input_path}")
         raise FileNotFoundError(f"No se encontró el archivo: {input_path}")
 
     _log_file_preview(input_path)
 
     try:
         if chunksize:
-            logger.info("Lectura por chunks (chunksize=%s)", chunksize)
+            logger.info(f"📦 Lectura por chunks (chunksize={chunksize})")
             chunks: List[pd.DataFrame] = []
-            for raw_chunk in pd.read_csv(
-                input_path,
-                sep=",",
-                chunksize=chunksize,
-                engine="c",  # si da error, cambia a "python"
-            ):
+            for raw_chunk in pd.read_csv(input_path, sep=",", chunksize=chunksize, engine="c"):
                 chunk = _validate_and_clean(raw_chunk)
                 chunks.append(chunk)
             df = pd.concat(chunks, ignore_index=True)
         else:
-            logger.info("Lectura completa del archivo")
-            raw_df = pd.read_csv(
-                input_path,
-                sep=",",
-                engine="c",  # si vuelve a fallar, prueba con "python"
-            )
+            logger.info("📥 Lectura completa del archivo CSV")
+            raw_df = pd.read_csv(input_path, sep=",", engine="c")
             df = _validate_and_clean(raw_df)
+
     except pd.errors.ParserError as e:
-        logger.error(
-            "ParserError leyendo el CSV. Es muy probable que el archivo no sea CSV válido "
-            "(¿Dropbox sin dl=1?) o tenga separadores inconsistentes. Error: %s", e
-        )
-        raise
+        logger.error(f"❌ Error de parsing con engine='c'. Reintentando con engine='python'...")
+        try:
+            raw_df = pd.read_csv(input_path, sep=",", engine="python")
+            df = _validate_and_clean(raw_df)
+        except Exception as inner:
+            logger.exception("❌ Falla al reintentar con engine='python': %s", inner)
+            raise
     except Exception as e:
-        logger.error("Error al leer o limpiar el CSV: %s", e)
+        logger.exception("❌ Error inesperado leyendo el CSV: %s", e)
         raise
 
     if output_parquet:
         output_path = Path(output_parquet)
         output_path.parent.mkdir(parents=True, exist_ok=True)
         df.to_parquet(output_path, index=False)
-        logger.info("Parquet guardado en: %s", output_path)
+        logger.info("✅ Parquet guardado en: %s", output_path)
 
-    logger.info("Transformación finalizada. Filas: %s, Columnas: %s", len(df), list(df.columns))
+    logger.info("✅ Transformación completa. Filas: %s, Columnas: %s", len(df), df.columns.tolist())
     return df
 
-
 def _validate_and_clean(df: pd.DataFrame) -> pd.DataFrame:
-    """Valida columnas y aplica limpieza básica."""
-    # Estándar: bajar columnas a minúsculas
     df.columns = [c.strip().lower() for c in df.columns]
-    logger.info("Columnas detectadas (normalizadas): %s", df.columns.tolist())
+    logger.info("🔎 Columnas detectadas: %s", df.columns.tolist())
 
-    # Validar columnas mínimas requeridas
     missing = [c for c in EXPECTED_COLS if c not in df.columns]
     if missing:
-        raise ValueError(f"Faltan columnas requeridas en el CSV: {missing}. Columnas presentes: {df.columns.tolist()}")
+        logger.error("❌ Faltan columnas: %s", missing)
+        raise ValueError(f"Columnas faltantes: {missing}. Encontradas: {df.columns.tolist()}")
 
-    # Limpieza
     df["ts"] = pd.to_datetime(df["ts"], errors="coerce")
     df["amount"] = pd.to_numeric(df["amount"], errors="coerce")
     df = df.dropna(subset=["order_id", "user_id", "ts", "amount"])
-
-    # Normalizaciones
     df["status"] = df["status"].astype(str).str.upper()
 
-    # Ordenar columnas (opcional)
-    df = df[EXPECTED_COLS]
-
-    return df
-
+    return df[EXPECTED_COLS]
 
 def _log_file_preview(path: Path, n_lines: int = 5) -> None:
-    """Loggea tamaño del archivo y las primeras líneas para depurar problemas de formato."""
     try:
-        size = path.stat().st_size
-        logger.info("Archivo a transformar: %s (%.2f KB)", path, size / 1024)
-
-        with path.open("r", encoding="utf-8", errors="ignore") as f:
+        size = os.path.getsize(path)
+        logger.info(f"📄 Tamaño del archivo: {size / 1024:.2f} KB")
+        with open(path, "r", encoding="utf-8", errors="ignore") as f:
             preview = "".join([next(f) for _ in range(n_lines)])
-        logger.info("Primeras %s líneas del archivo:\n%s", n_lines, preview)
+        logger.info("👀 Primeras líneas del archivo:\n%s", preview)
 
-        # Heurística: si parece HTML, avisar
         if "<html" in preview.lower():
-            logger.error(
-                "El archivo parece ser HTML. Probablemente la URL de Dropbox no usa dl=1. "
-                "Revisa CSV_URL en etl/config.py."
-            )
-            raise ValueError("Archivo no válido (parece HTML). Verifica la URL de descarga (dl=1).")
+            logger.error("⚠️ El archivo parece HTML. Revisa la URL (¿falta dl=1?)")
+            raise ValueError("Archivo parece HTML. Verifica la URL (dl=1).")
 
     except StopIteration:
-        logger.warning("El archivo tiene menos de %s líneas.", n_lines)
+        logger.warning("⚠️ Archivo muy corto, menos de %s líneas", n_lines)
     except Exception as e:
-        logger.warning("No se pudo previsualizar el archivo: %s", e)
+        logger.warning("⚠️ No se pudo previsualizar el archivo: %s", e)
