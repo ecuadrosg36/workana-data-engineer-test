@@ -123,10 +123,45 @@ El código está preparado para cambiar fácilmente a PostgreSQL si se desea.
 ### ⚙️ Orquestación con Airflow
 
 - [X] Crear DAG con tareas:
+
   - Descargar archivo
   - Esperar archivo y tamaño
   - Transformar datos
   - Cargar a DB
+
+## 🐳 Ejecución con Docker + Airflow (recomendado)
+
+- [X] Esta configuración inicia Airflow (webserver + scheduler) y PostgreSQL como backend.
+
+```
+docker-compose up
+```
+
+  Esto realiza lo siguiente:
+
+* Inicia PostgreSQL como base de datos de Airflow
+* Inicializa Airflow
+* Crea el usuario admin
+* Expone la interfaz en: [http://localhost:8080](http://localhost:8080)
+
+  **Credenciales de acceso:**
+* Usuario: `admin`
+* Contraseña: `admin`
+
+---
+
+## 🧠 Decisiones técnicas
+
+* **SQLite** se utiliza como base de datos de carga por simplicidad y portabilidad.
+* **Airflow en Docker** permite orquestación reproducible sin depender del sistema operativo.
+* **Modularidad y pruebas** : el proyecto está dividido en componentes reutilizables (`scripts/`, `etl/`, `dags/`) con logging, validaciones y manejo de errores.
+
+  ![1753663082080](image/README/1753663082080.png)
+
+![1753663132046](image/README/1753663132046.png)
+
+![1753663219056](image/README/1753663219056.png)
+
 - [X] Agregar sensores y reintentos a las tareas
   ➜ `airflow_dags/etl_transactions_dag.py`
 
