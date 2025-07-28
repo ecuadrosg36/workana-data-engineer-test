@@ -109,6 +109,13 @@ git push -u origin main
 - [X] Crear función para carga a DB
   ➜ `etl/load.py`
 
+![1753658977385](image/README/1753658977385.png)
+
+
+![1753659062275](image/README/1753659062275.png)
+
+![1753659089795](image/README/1753659089795.png)
+
 ## 🧠 Por qué SQLite
 
 Inicialmente se planeó usar PostgreSQL, pero se optó por SQLite como alternativa práctica. SQLite no requiere instalación, es compatible con SQLAlchemy y permite ejecutar el pipeline completo localmente.
@@ -117,7 +124,7 @@ El código está preparado para cambiar fácilmente a PostgreSQL si se desea.
 
 ### ⚙️ Orquestación con Airflow
 
-- [ ] Crear DAG con tareas:
+- [X] Crear DAG con tareas:
   - Descargar archivo
   - Esperar archivo y tamaño
   - Transformar datos
