@@ -49,7 +49,24 @@ with DAG(
     # Python callables
     # ---------------------
     def task_descargar():
-        download_csv(CSV_URL, str(RAW_CSV_PATH))
+        from etl.config import CSV_URL, RAW_CSV_PATH
+        from scripts.download_csv import download_csv
+
+        print("🔽 Iniciando descarga del archivo CSV...")
+        print(f"🔗 URL: {CSV_URL}")
+        print(f"📥 Guardando en: {RAW_CSV_PATH}")
+
+        try:
+            download_csv(CSV_URL, str(RAW_CSV_PATH))
+            if os.path.exists(RAW_CSV_PATH):
+                file_size = os.path.getsize(RAW_CSV_PATH)
+                print(f"✅ Archivo descargado exitosamente. Tamaño: {file_size} bytes")
+            else:
+                print("❌ Archivo no encontrado después de la descarga")
+        except Exception as e:
+            print(f"❌ Error durante la descarga: {e}")
+            raise
+
 
     def task_esperar_archivo():
         return wait_for_file(
