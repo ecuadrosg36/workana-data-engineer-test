@@ -18,12 +18,13 @@ services:
       AIRFLOW__CORE__FERNET_KEY: ''
       AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
-      PROJECT_ROOT: /opt/airflow/project     
+      AIRFLOW__WEBSERVER__SECRET_KEY: supersecretkey123
+      PROJECT_ROOT: /opt/airflow/project
     depends_on:
       - postgres
     volumes:
       - ./dags:/opt/airflow/dags
-      - ./:/opt/airflow/project              
+      - ./:/opt/airflow/project
     ports:
       - 8080:8080
     command: >
@@ -40,12 +41,12 @@ services:
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-      PROJECT_ROOT: /opt/airflow/project     
+      AIRFLOW__WEBSERVER__SECRET_KEY: supersecretkey123
+      PROJECT_ROOT: /opt/airflow/project
     volumes:
       - ./dags:/opt/airflow/dags
-      - ./:/opt/airflow/project              
+      - ./:/opt/airflow/project
     command: airflow scheduler
-
 
 volumes:
   postgres_db:

@@ -165,6 +165,8 @@ docker-compose up
 - [X] Agregar sensores y reintentos a las tareas
   ➜ `airflow_dags/etl_transactions_dag.py`
 
+  ![1753666490954](image/README/1753666490954.png)
+
 ### 🧪 Testing
 
 - [ ] Escribir tests unitarios para transformación y carga➜ `tests/test_transform.py`➜ `tests/test_load.py`
