@@ -178,18 +178,22 @@ docker-compose up
 
   ![1753721641888](image/README/1753721641888.png)
 
-### 📈 Logging y métricas 
+### 📈 Logging y métricas
 
-- [ ] Registrar logs detallados por tarea
-- [ ] Medir tiempo de ejecución por paso
-- [ ] Registrar cantidad de registros procesados
+- [X] Registrar logs detallados por tarea
+- [X] Medir tiempo de ejecución por paso
+- [X] Registrar cantidad de registros procesados
+
+![1753723944617](image/README/1753723944617.png)
 
 ### 📬 Validaciones y alertas
 
-- [ ] Validar si tabla destino está vacía
-- [ ] Generar alerta/log en caso de error
+- [X] Validar si tabla destino está vacía
+- [X] Generar alerta/log en caso de error
 
-## 🚀 Extras 
+![1753723993609](image/README/1753723993609.png)
+
+## 🚀 Extras
 
 - [ ] Lectura eficiente con `pandas.read_csv(..., chunksize=...)`
 - [ ] Soporte para `.csv.gz` con `compression='gzip'`
@@ -207,16 +211,20 @@ Ejecutar consultas SQL sobre los datos ya cargados en la base de datos (desde el
 
 ### 📄 1. Crear vista/tabla resumen por día y estado
 
-- [ ] Definir estructura: fecha, estado, cantidad de transacciones
-- [ ] Crear script SQL➜ `sql/view_summary_by_date_status.sql`
-- [ ] Ejecutar script y verificar contenido
+- [X] Definir estructura: fecha, estado, cantidad de transacciones
+- [X] Crear script SQL➜ `sql/view_summary_by_date_status.sql`
+- [X] Ejecutar script y verificar contenido
+
+  ![1753724395074](image/README/1753724395074.png)
 
 ### 🔍 2. Query para usuarios con >3 transacciones fallidas en últimos 7 días
 
-- [ ] Identificar campo `status` o equivalente para marcar transacción fallida
-- [ ] Escribir query con `GROUP BY user_id`, `HAVING COUNT > 3`, `WHERE fecha >= current_date - 7`
-- [ ] Guardar como
+- [X] Identificar campo `status` o equivalente para marcar transacción fallida
+- [X] Escribir query con `GROUP BY user_id`, `HAVING COUNT > 3`, `WHERE fecha >= current_date - 7`
+- [X] Guardar como
   ➜ `sql/query_frequent_failures.sql`
+
+  ![1753724546056](image/README/1753724546056.png)
 
 ### 📈 3. Detección de anomalías (incrementos anómalos)
 
