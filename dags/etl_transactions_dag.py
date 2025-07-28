@@ -1,8 +1,20 @@
+import sys
+import os
+sys.path.insert(0, os.environ.get("PROJECT_ROOT", "/opt/airflow/project"))
+
 from airflow import DAG
 from airflow.operators.python import PythonOperator, ShortCircuitOperator
 from datetime import datetime, timedelta
-import os
 import logging
+
+# Rutas
+CSV_PATH = "/opt/airflow/project/data/sample_transactions.csv"
+SQLITE_PATH = "/opt/airflow/project/data/transactions.db"
+
+# Importaciones del proyecto
+from etl.transform import transform_transactions
+from etl.load import load_dataframe_to_sqlite
+
 
 # Configuración del DAG
 default_args = {
@@ -10,14 +22,6 @@ default_args = {
     "retries": 2,
     "retry_delay": timedelta(seconds=30),
 }
-
-# Definir rutas relativas dentro del contenedor
-CSV_PATH = "/opt/airflow/project/data/sample_transactions.csv"
-SQLITE_PATH = "/opt/airflow/project/data/transactions.db"
-
-# Importar funciones
-from etl.transform import transform_transactions
-from etl.load import load_dataframe_to_sqlite
 
 # Configurar logging
 logger = logging.getLogger(__name__)
