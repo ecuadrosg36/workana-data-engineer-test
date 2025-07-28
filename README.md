@@ -215,7 +215,8 @@ Ejecutar consultas SQL sobre los datos ya cargados en la base de datos (desde el
 - [X] Crear script SQL➜ `sql/view_summary_by_date_status.sql`
 - [X] Ejecutar script y verificar contenido
 
-  ![1753724395074](image/README/1753724395074.png)
+  ![1753735003870](image/README/1753735003870.png)
+
 
   ![1753726040297](image/README/1753726040297.png)
 
@@ -228,38 +229,46 @@ Ejecutar consultas SQL sobre los datos ya cargados en la base de datos (desde el
 - [X] Guardar como
   ➜ `sql/query_frequent_failures.sql`
 
-  ![1753724546056](image/README/1753724546056.png)
+  ![1753735061263](image/README/1753735061263.png)
 
   ![1753726979327](image/README/1753726979327.png)
 
+  ![1753735117333](image/README/1753735117333.png)
+
 ### 📈 3. Detección de anomalías (incrementos anómalos)
 
-- [ ] Crear query que compare conteo diario con el promedio de días anteriores
-- [ ] Definir umbral de alerta (ej: +100% sobre la media de los últimos 3 días)
-- [ ] Guardar como➜ `sql/query_detect_anomalies.sql`
+- [X] Crear query que compare conteo diario con el promedio de días anteriores
+- [X] Definir umbral de alerta (ej: +100% sobre la media de los últimos 3 días)
+- [X] Guardar como➜ `sql/query_detect_anomalies.sql`
 - [ ] (Opcional) Simular alerta/log si se detecta
+
+  ![1753737058422](image/README/1753737058422.png)
+
+![1753735749694](image/README/1753735749694.png)
+
+![1753736991138](image/README/1753736991138.png)
+
 
 ### 🧱 4. Índices y triggers
 
-- [ ] Crear índices sobre columnas claves (ej: `user_id`, `status`, `timestamp`)➜ `sql/create_indexes.sql`
-- [ ] Diseñar triggers para:
-  - [ ] Detectar valores fuera de rango (ej: fecha futura)
-  - [ ] Detectar intentos de inserción duplicada
+- [X] Crear índices sobre columnas claves (ej: `user_id`, `status`, `timestamp`)➜ `sql/create_indexes.sql`
+- [X] Diseñar triggers para:
+  - [X] Detectar valores fuera de rango (ej: fecha futura)
+  - [X] Detectar intentos de inserción duplicada
     ➜ `sql/create_triggers.sql`
+    ![1753735724226](image/README/1753735724226.png)
+
+    ![1753735806273](image/README/1753735806273.png)
+
+    ![1753735871487](image/README/1753735871487.png)
+
+    ![1753737292890](image/README/1753737292890.png)
 
 ### 📂 5. Particionamiento lógico
 
 - [ ] Documentar propuesta de particionado (ej: por mes usando `timestamp`)
 - [ ] Simularlo si DB lo permite (ej: `CREATE TABLE datos_2025_07` + `UNION ALL`)
 - [ ] Explicar ventajas esperadas en rendimiento
-
----
-
-## 🗂️ Enlaces por hacer / dependencias
-
-- [ ] [ ] Asegurar que base de datos contiene los datos cargados del ejercicio 1
-- [ ] [ ] Crear conexión desde SQL scripts o notebook a la DB
-- [ ] [ ] Documentar cada query en el README con ejemplo de uso y output esperado
 
 ---
 
